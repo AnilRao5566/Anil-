@@ -1,0 +1,26 @@
+app.post('/add-coupon', async (req, res) => {
+  try {
+    const { code, discount, validity } = req.body;
+    const newCoupon = new Coupon({ code, discount, validity });
+    await newCoupon.save();
+    res.status(201).json({ message: 'Coupon added', coupon: newCoupon });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/apply-coupon', async (req, res) => {
+  try {
+    const { code, total } = req.body;
+    const coupon = await Coupon.findOne({ code });
+
+    if (!coupon || new Date() > coupon.validity) {
+      return res.status(400).send('Invalid or expired coupon');
+    }
+
+    const discountedTotal = total - (total * coupon.discount) / 100;
+    res.status(200).json({ discountedTotal });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});

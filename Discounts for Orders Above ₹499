@@ -1,0 +1,14 @@
+app.post('/checkout', async (req, res) => {
+  try {
+    const { total } = req.body;
+    let finalTotal = total;
+
+    if (total > 499) {
+      finalTotal -= (total * 10) / 100; // 10% discount
+    }
+
+    res.status(200).json({ finalTotal, freeDelivery: total > 499 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});

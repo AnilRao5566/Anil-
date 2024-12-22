@@ -1,0 +1,10 @@
+app.post('/add-product', async (req, res) => {
+  try {
+    const { name, price, description } = req.body;
+    const newProduct = new Product({ name, price, description, images: [] });
+    await newProduct.save();
+    res.status(201).json({ message: 'Product added', product: newProduct });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
